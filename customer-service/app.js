@@ -75,6 +75,12 @@ app.use(errorHandler);
 // Register with service registry
 async function registerWithServiceRegistry() {
   try {
+    // Check if SERVICE_REGISTRY_URL is defined
+    if (!SERVICE_REGISTRY_URL) {
+      console.log('Service Registry URL not defined, skipping registration');
+      return;
+    }
+
     const response = await fetch(`${SERVICE_REGISTRY_URL}/register`, {
       method: 'POST',
       headers: {
@@ -98,6 +104,7 @@ async function registerWithServiceRegistry() {
     }
   } catch (error) {
     console.error('Error registering with Service Registry:', error.message);
+    console.log('Continuing without Service Registry registration');
   }
 }
 
@@ -107,20 +114,21 @@ function deregisterFromServiceRegistry() {
   if (serviceId) {
     console.log(`Deregistering service ID: ${serviceId}`);
     
-    fetch(`${SERVICE_REGISTRY_URL}/register/${serviceId}`, {
-      method: 'DELETE',
-    }).catch(err => {
-      console.error('Error deregistering from Service Registry:', err.message);
-    });
+    try {
+      fetch(`${SERVICE_REGISTRY_URL}/register/${serviceId}`, {
+        method: 'DELETE',
+      }).catch(err => {
+        console.error('Error deregistering from Service Registry:', err.message);
+      });
+    } catch (error) {
+      console.error('Error deregistering from Service Registry:', error.message);
+    }
   }
 }
 
 // Connect to MongoDB and start server
 mongoose
-  .connect(MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(MONGO_URI)
   .then(() => {
     console.log('Connected to MongoDB');
     
