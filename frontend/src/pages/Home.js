@@ -1,54 +1,70 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Container, Row, Col, Card, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/product/ProductCard';
- 
+import axios from 'axios';
+import { ServiceContext } from '../services/ServiceContext';
+
 const Home = () => {
+  const { productService } = useContext(ServiceContext);
+
+  const [featuredProducts, setFeaturedProducts] = useState([]);
+  useEffect(() => {
+    const fetchFeaturedProducts = async () => {
+      try {
+        const response = await axios.get(`${productService}/api/products/featured`);
+        setFeaturedProducts(response.data);
+      } catch (error) {
+        console.error('Failed to fetch featured products:', error);
+      }
+    };
+    fetchFeaturedProducts();
+   }, [productService]);
   // Mock featured products (in a real app, these would come from the product service)
-  const [featuredProducts, setFeaturedProducts] = useState([
-    {
-      id: 1,
-      name: "Smartphone X Pro",
-      price: 799.99,
-      imageUrl: "https://via.placeholder.com/300x200?text=Smartphone",
-      averageRating: 4.5,
-      stockQuantity: 15,
-      featured: true
-    },
-    {
-      id: 2,
-      name: "Ultra Laptop 15",
-      price: 1299.99,
-      imageUrl: "https://via.placeholder.com/300x200?text=Laptop",
-      averageRating: 4.8,
-      stockQuantity: 8,
-      featured: true
-    },
-    {
-      id: 3,
-      name: "Wireless Earbuds",
-      price: 129.99,
-      imageUrl: "https://via.placeholder.com/300x200?text=Earbuds",
-      averageRating: 4.2,
-      stockQuantity: 20,
-      featured: true
-    },
-    {
-      id: 4,
-      name: "Smart Watch Series 5",
-      price: 249.99,
-      imageUrl: "https://via.placeholder.com/300x200?text=Smartwatch",
-      averageRating: 4.6,
-      stockQuantity: 12,
-      featured: true
-    }
-  ]);
+  // const [featuredProducts, setFeaturedProducts] = useState([
+  //   {
+  //     id: 1,
+  //     name: "Smartphone X Pro",
+  //     price: 799.99,
+  //     imageUrl: "https://via.placeholder.com/300x200?text=Smartphone",
+  //     averageRating: 4.5,
+  //     stockQuantity: 15,
+  //     featured: true
+  //   },
+  //   {
+  //     id: 2,
+  //     name: "Ultra Laptop 15",
+  //     price: 1299.99,
+  //     imageUrl: "https://via.placeholder.com/300x200?text=Laptop",
+  //     averageRating: 4.8,
+  //     stockQuantity: 8,
+  //     featured: true
+  //   },
+  //   {
+  //     id: 3,
+  //     name: "Wireless Earbuds",
+  //     price: 129.99,
+  //     imageUrl: "https://via.placeholder.com/300x200?text=Earbuds",
+  //     averageRating: 4.2,
+  //     stockQuantity: 20,
+  //     featured: true
+  //   },
+  //   {
+  //     id: 4,
+  //     name: "Smart Watch Series 5",
+  //     price: 249.99,
+  //     imageUrl: "https://via.placeholder.com/300x200?text=Smartwatch",
+  //     averageRating: 4.6,
+  //     stockQuantity: 12,
+  //     featured: true
+  //   }
+  // ]);
  
   const categories = [
-    { id: 'smartphones', name: 'Smartphones', icon: '📱' },
-    { id: 'laptops', name: 'Laptops', icon: '💻' },
+    { id: 'phone', name: 'Smartphones', icon: '📱' },
+    { id: 'laptop', name: 'Laptops', icon: '💻' },
     { id: 'accessories', name: 'Accessories', icon: '🎧' },
-    { id: 'tablets', name: 'Tablets', icon: '📟' }
+    { id: 'tablet', name: 'Tablets', icon: '📟' }
   ];
  
   return (
@@ -90,6 +106,7 @@ const Home = () => {
 <Col key={category.id}>
 <Card 
                 as={Link} 
+                // as={product_service_url}
                 to={`/products/${category.id}`}
                 className="h-100 text-center text-decoration-none category-card"
 >

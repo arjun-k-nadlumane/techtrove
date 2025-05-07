@@ -5,6 +5,8 @@ import { ServiceContext } from '../services/ServiceContext';
 import ProductCard from '../components/product/ProductCard';
 
 const ProductList = () => {
+
+
   const { category } = useParams();
   const { productService } = useContext(ServiceContext);
   
@@ -30,6 +32,7 @@ const ProductList = () => {
       setError(null);
       
       try {
+
         // Build query parameters
         const params = new URLSearchParams();
         if (filters.category) params.append('category', filters.category);
@@ -41,6 +44,8 @@ const ProductList = () => {
         
         // Fetch products from backend
         const response = await fetch(`${productService}/api/products?${params}`);
+        // const response = await fetch(`${product_service_url}/api/products?${params}`);
+        console.log('Products:',response.data);
         
         if (!response.ok) {
           throw new Error('Failed to fetch products');
