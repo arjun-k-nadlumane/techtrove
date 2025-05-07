@@ -1,7 +1,7 @@
 // pages/ProductDetail.js
 import React, { useState, useEffect, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Row, Col, Image, Button, Card, Badge, Tabs, Tab, Form, Alert, Spinner } from 'react-bootstrap';
+import { Container, Row, Col, Image, Button, Card, Badge, Tabs, Tab, Form, Alert, Spinner, Table } from 'react-bootstrap';
 import { FaStar, FaRegStar, FaStarHalfAlt, FaHeart, FaRegHeart, FaShoppingCart } from 'react-icons/fa';
 import { ServiceContext } from '../services/ServiceContext';
 import { useAuth } from '../context/AuthContext';

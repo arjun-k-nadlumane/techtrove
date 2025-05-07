@@ -78,12 +78,3 @@ export async function withCircuitBreaker(apiCall, retries = 2, fallback = null) 
   
   throw lastError;
 }
-
-// Service Context for React components
-import { createContext } from 'react';
-
-export const ServiceContext = createContext({
-  customerService: null,
-  productService: null,
-  feedbackService: null
-});
