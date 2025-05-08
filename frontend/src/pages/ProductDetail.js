@@ -159,12 +159,26 @@ const ProductDetail = () => {
     setReviewSuccess(false);
     
     try {
-      await axios.post(`${services.feedbackService}/api/reviews`, {
+      console.log({
         product_id: parseInt(id),
-        user_id: user.id,
+        user_id: user?._id,
         username: user.name,
         rating: parseInt(reviewForm.rating),
         comment: reviewForm.comment
+      });
+      await axios.post(`${services.feedbackService}/api/reviews`, {
+        product_id: parseInt(id),
+        user_id: user?._id,
+        username: user.name,
+        rating: parseInt(reviewForm.rating),
+        comment: reviewForm.comment
+      })
+      .then(res => {
+        console.log('submitted',res.data);
+      })
+
+      .catch(err => {
+        console.error('error:',err.response?.data || err.message);
       });
       
       setReviewSuccess(true);

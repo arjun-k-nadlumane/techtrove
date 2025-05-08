@@ -73,7 +73,7 @@ const Home = () => {
 <div className="bg-primary text-white py-5 mb-5">
 <Container>
 <Row className="align-items-center">
-<Col md={6} className="mb-4 mb-md-0">
+<Col md={7} className="mb-4 mb-md-0">
 <h1>Welcome to TechTrove</h1>
 <p className="lead">
                 Your one-stop shop for premium electronics with smart recommendations and real-time inventory
@@ -87,9 +87,9 @@ const Home = () => {
                 Browse Products
 </Button>
 </Col>
-<Col md={6}>
+<Col md={5}>
 <img 
-                src="https://via.placeholder.com/600x400?text=TechTrove+Banner" 
+                src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcR_0ZYlvwpF39LbgMlIDRq-bfvN-kK3UKcr4w&s" 
                 alt="TechTrove Electronics" 
                 className="img-fluid rounded shadow"
               />

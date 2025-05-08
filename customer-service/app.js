@@ -6,6 +6,7 @@ const morgan = require('morgan');
 const swaggerUi = require('swagger-ui-express');
 const swaggerJsDoc = require('swagger-jsdoc');
 const fetch = require('node-fetch');
+require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const profileRoutes = require('./routes/profile');
@@ -40,6 +41,13 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 
 // Middleware
 app.use(cors());
+const corsOptions = {
+  origin: '*', // Replace with your React app's origin
+  methods: 'GET,POST,DELETE,PUT',
+  credentials: true, // Allow cookies and authorization headers
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(morgan(NODE_ENV === 'development' ? 'dev' : 'combined'));
 
