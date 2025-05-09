@@ -1,4 +1,5 @@
-// src/pages/Checkout.js - Simplified version to focus on API call
+// src/pages/Checkout.js
+// Fixed version with proper navigation after order placement
 
 import React, { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
@@ -8,7 +9,7 @@ import { useAuth } from '../context/AuthContext';
 import { ServiceContext } from '../services/ServiceContext';
 
 const Checkout = () => {
-  const { cart, getCartTotal } = useCart();
+  const { cart, getCartTotal, clearCart } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
   const { customerService } = useContext(ServiceContext);
@@ -24,8 +25,6 @@ const Checkout = () => {
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
-  const [apiUrl, setApiUrl] = useState(`${customerService}/api/orders/`);
-  const [authHeader, setAuthHeader] = useState('');
   
   // Redirect if not logged in
   useEffect(() => {
@@ -49,15 +48,6 @@ const Checkout = () => {
     }));
   };
   
-  const handleAuthChange = (e) => {
-    setAuthHeader(e.target.value);
-  };
-  
-  const handleApiUrlChange = (e) => {
-    setApiUrl(e.target.value);
-  };
-  
-  // Direct form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
@@ -71,20 +61,21 @@ const Checkout = () => {
     setError('');
     
     try {
-      // Get token from localStorage or use custom header
+      // Get authentication token from localStorage
       const token = localStorage.getItem('token');
-      const finalAuthHeader = authHeader || `Bearer ${token}`;
+      console.log('Token from localStorage:', token);
       
-      console.log('Using token:', token);
-      console.log('Using auth header:', finalAuthHeader);
-      console.log('Using API URL:', apiUrl);
+      if (!token) {
+        throw new Error('Authentication token not found');
+      }
       
-      // Create order items from cart
+      // Create order data from cart items
       const orderItems = cart.map(item => ({
         productId: item.id,
         name: item.name,
         price: item.price,
-        quantity: item.quantity
+        quantity: item.quantity,
+        image: item.image || ''
       }));
       
       // Create the order data
@@ -94,14 +85,15 @@ const Checkout = () => {
         totalAmount: getCartTotal()
       };
       
-      console.log('Sending order data:', orderData);
+      console.log('Making request to:', `${customerService}/api/orders/`);
+      console.log('Order data:', orderData);
       
-      // Make the API request
-      const response = await fetch(apiUrl, {
+      // Make the API request with proper authorization header
+      const response = await fetch(`${customerService}/api/orders/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': finalAuthHeader
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify(orderData)
       });
@@ -117,7 +109,7 @@ const Checkout = () => {
           const errorData = JSON.parse(errorText);
           errorMessage = errorData.message || errorData.error || 'Failed to place order';
         } catch (e) {
-          errorMessage = errorText || 'Failed to place order';
+          errorMessage = 'Failed to place order';
         }
         
         throw new Error(errorMessage);
@@ -126,15 +118,27 @@ const Checkout = () => {
       const order = await response.json();
       console.log('Order created successfully:', order);
       
-      // Navigate to order confirmation page or home if no ID
-      if (order && order.data && order.data._id) {
-        navigate(`/order-confirmation/${order.data._id}`);
-      } else if (order && order._id) {
-        navigate(`/order-confirmation/${order._id}`);
+      // Clear the cart
+      clearCart();
+      
+      // IMPORTANT FIX: Store order ID correctly based on the response structure
+      let orderId;
+      if (order.data && order.data._id) {
+        orderId = order.data._id;
+      } else if (order._id) {
+        orderId = order._id;
       } else {
-        console.log('Order created but no ID found. Navigating to home...');
-        navigate('/');
+        console.error('Order ID not found in response:', order);
+        throw new Error('Order created but ID not found');
       }
+      
+      console.log('Navigating to order confirmation with ID:', orderId);
+      
+      // IMPORTANT FIX: Wait for cart to clear before navigating
+      // This prevents the cart check in the useEffect from redirecting
+      setTimeout(() => {
+        navigate(`/order-confirmation/${orderId}`);
+      }, 100);
       
     } catch (err) {
       console.error('Checkout error:', err);
@@ -144,15 +148,24 @@ const Checkout = () => {
     }
   };
   
-  if (!user || cart.length === 0) {
+  // Only render if user is logged in and cart is not empty
+  if (!user) {
     return null;
+  }
+  
+  if (cart.length === 0 && !loading) {
+    return (
+      <Container className="py-4">
+        <Alert variant="info">
+          Your cart is empty. Please add items to your cart before checking out.
+        </Alert>
+      </Container>
+    );
   }
   
   return (
     <Container className="py-4">
       <h2 className="mb-4">Checkout</h2>
-      
-      
       
       <Row>
         <Col lg={8}>
