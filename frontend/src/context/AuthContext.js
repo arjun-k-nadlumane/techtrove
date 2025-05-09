@@ -1,40 +1,43 @@
+// src/context/AuthContext.js - Fixed version with proper null checking
+
 import React, { createContext, useState, useContext, useEffect } from 'react';
+import { ServiceContext } from '../services/ServiceContext';
 
 const AuthContext = createContext();
 
-export function useAuth() {
-  return useContext(AuthContext);
-}
-
-export function AuthProvider({ children }) {
+export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [tokens,setTokens] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
-
+  const { customerService } = useContext(ServiceContext);
+  
+  // Load user from localStorage on initial mount
   useEffect(() => {
-    // Check if user is already logged in (from localStorage)
-    const storedUser = localStorage.getItem('user');
-    const token = localStorage.getItem('token');
-    
-    if (storedUser && token) {
+    const loadUser = async () => {
       try {
-        setUser(JSON.parse(storedUser));
-        setTokens(token);
-      } catch (e) {
-        console.error('Failed to parse stored user', e);
-        localStorage.removeItem('user');
+        const token = localStorage.getItem('token');
+        const storedUser = localStorage.getItem('user');
+        
+        if (token && storedUser) {
+          // Simply set the user from localStorage for now
+          // We're keeping it simple to avoid additional errors
+          setUser(JSON.parse(storedUser));
+        }
+      } catch (error) {
+        console.error('Error loading user:', error);
+        // Clear potentially corrupted data
         localStorage.removeItem('token');
+        localStorage.removeItem('user');
+      } finally {
+        setLoading(false);
       }
-    }
-    setLoading(false);
-  }, []);
-
+    };
+    
+    loadUser();
+  }, [customerService]);
+  
   const login = async (email, password) => {
-    setError(null);
     try {
-      // Make actual API call to backend
-      const response = await fetch('http://localhost:8081/api/auth/login', {
+      const response = await fetch(`${customerService}/api/auth/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -44,26 +47,45 @@ export function AuthProvider({ children }) {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to login');
+        throw new Error(errorData.message || 'Failed to login');
       }
       
       const data = await response.json();
-      setUser(data.data);
-      localStorage.setItem('user', JSON.stringify(data.data));
+      
+      // Add extensive logging to debug the response structure
+      console.log('Login response data:', data);
+      
+      // Important: Check if the response actually contains a token
+      if (!data.token) {
+        throw new Error('No token received from server');
+      }
+      
       localStorage.setItem('token', data.token);
-      setTokens(data.token);
-      return data.data;
-    } catch (err) {
-      setError(err.message || 'Failed to login');
-      throw err;
+      
+      // Create a minimal user object based on available data
+      // with null checking for each property
+      const userData = {
+        id: data.user?.id || data._id || data.id || 'unknown',
+        name: data.user?.name || data.name || email.split('@')[0], // Fallback to part of email
+        email: data.user?.email || data.email || email,
+        role: data.user?.role || data.role || 'user'
+      };
+      
+      console.log('Created user data:', userData);
+      
+      localStorage.setItem('user', JSON.stringify(userData));
+      setUser(userData);
+      
+      return userData;
+    } catch (error) {
+      console.error('Login error:', error);
+      throw error;
     }
   };
-
+  
   const register = async (name, email, password) => {
-    setError(null);
     try {
-      // Make actual API call to backend
-      const response = await fetch('http://localhost:8081/api/auth/register', {
+      const response = await fetch(`${customerService}/api/auth/register`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -73,46 +95,55 @@ export function AuthProvider({ children }) {
       
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to register');
+        throw new Error(errorData.message || 'Failed to register');
       }
       
       const data = await response.json();
-      setUser(data.data);
-      localStorage.setItem('user', JSON.stringify(data.data));
-      localStorage.setItem('token', data.token);
-      return data.data;
-    } catch (err) {
-      setError(err.message || 'Failed to register');
-      throw err;
+      console.log('Register response data:', data);
+      
+      // Some backends automatically log in the user after registration
+      if (data.token) {
+        localStorage.setItem('token', data.token);
+        
+        // Create user data with fallbacks
+        const userData = {
+          id: data.user?.id || data._id || data.id || 'unknown',
+          name: data.user?.name || data.name || name,
+          email: data.user?.email || data.email || email,
+          role: data.user?.role || data.role || 'user'
+        };
+        
+        localStorage.setItem('user', JSON.stringify(userData));
+        setUser(userData);
+      }
+      
+      return data;
+    } catch (error) {
+      console.error('Registration error:', error);
+      throw error;
     }
   };
-
+  
   const logout = () => {
-    // Make API call to logout endpoint
-    fetch('http://localhost:8081/api/auth/logout', {
-      headers: {
-        'Authorization': `Bearer ${localStorage.getItem('token')}`
-      }
-    }).catch(err => console.error('Logout error:', err));
-    
-    setUser(null);
-    localStorage.removeItem('user');
     localStorage.removeItem('token');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('user');
+    setUser(null);
   };
-
-  const value = {
-    user,
-    tokens,
-    loading,
-    error,
-    login,
-    register,
-    logout
-  };
-
+  
   return (
-    <AuthContext.Provider value={value}>
+    <AuthContext.Provider value={{ 
+      user, 
+      loading, 
+      login, 
+      register, 
+      logout
+    }}>
       {children}
     </AuthContext.Provider>
   );
-}
+};
+
+export const useAuth = () => useContext(AuthContext);
+
+export default AuthContext;

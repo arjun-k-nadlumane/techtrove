@@ -1,15 +1,17 @@
-// src/pages/Checkout.js - Create or update this file
+// src/pages/Checkout.js - Simplified version to focus on API call
 
-import React, { useState, useContext } from 'react';
+import React, { useState, useContext, useEffect } from 'react';
 import { Container, Row, Col, Card, Form, Button, Alert } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../context/AuthContext';
+import { ServiceContext } from '../services/ServiceContext';
 
 const Checkout = () => {
-  const { cart, getCartTotal, checkout } = useCart();
+  const { cart, getCartTotal } = useCart();
   const { user } = useAuth();
   const navigate = useNavigate();
+  const { customerService } = useContext(ServiceContext);
   
   const [shippingDetails, setShippingDetails] = useState({
     addressLine1: '',
@@ -22,16 +24,18 @@ const Checkout = () => {
   
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [apiUrl, setApiUrl] = useState(`${customerService}/api/orders/`);
+  const [authHeader, setAuthHeader] = useState('');
   
   // Redirect if not logged in
-  React.useEffect(() => {
+  useEffect(() => {
     if (!user) {
       navigate('/login', { state: { from: { pathname: '/checkout' } } });
     }
   }, [user, navigate]);
   
   // Redirect if cart is empty
-  React.useEffect(() => {
+  useEffect(() => {
     if (cart.length === 0) {
       navigate('/cart');
     }
@@ -45,10 +49,19 @@ const Checkout = () => {
     }));
   };
   
+  const handleAuthChange = (e) => {
+    setAuthHeader(e.target.value);
+  };
+  
+  const handleApiUrlChange = (e) => {
+    setApiUrl(e.target.value);
+  };
+  
+  // Direct form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    if (!shippingDetails.addressLine1 || !shippingDetails.city || 
+    if (!shippingDetails.addressLine1 || !shippingDetails.city ||
         !shippingDetails.state || !shippingDetails.postalCode) {
       setError('Please fill in all required fields');
       return;
@@ -58,8 +71,71 @@ const Checkout = () => {
     setError('');
     
     try {
-      const order = await checkout(shippingDetails);
-      navigate(`/order-confirmation/${order._id}`);
+      // Get token from localStorage or use custom header
+      const token = localStorage.getItem('token');
+      const finalAuthHeader = authHeader || `Bearer ${token}`;
+      
+      console.log('Using token:', token);
+      console.log('Using auth header:', finalAuthHeader);
+      console.log('Using API URL:', apiUrl);
+      
+      // Create order items from cart
+      const orderItems = cart.map(item => ({
+        productId: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      }));
+      
+      // Create the order data
+      const orderData = {
+        items: orderItems,
+        shippingDetails,
+        totalAmount: getCartTotal()
+      };
+      
+      console.log('Sending order data:', orderData);
+      
+      // Make the API request
+      const response = await fetch(apiUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': finalAuthHeader
+        },
+        body: JSON.stringify(orderData)
+      });
+      
+      console.log('Response status:', response.status);
+      
+      if (!response.ok) {
+        const errorText = await response.text();
+        console.log('Error response:', errorText);
+        
+        let errorMessage;
+        try {
+          const errorData = JSON.parse(errorText);
+          errorMessage = errorData.message || errorData.error || 'Failed to place order';
+        } catch (e) {
+          errorMessage = errorText || 'Failed to place order';
+        }
+        
+        throw new Error(errorMessage);
+      }
+      
+      const order = await response.json();
+      console.log('Order created successfully:', order);
+      
+      // Navigate to order confirmation page or home if no ID
+      if (order && order.data && order.data._id) {
+        navigate(`/order-confirmation/${order.data._id}`);
+      } else if (order && order._id) {
+        navigate(`/order-confirmation/${order._id}`);
+      } else {
+        console.log('Order created but no ID found. Navigating to home...');
+        navigate('/');
+      }
+      
     } catch (err) {
       console.error('Checkout error:', err);
       setError(err.message || 'Failed to place order. Please try again later.');
@@ -75,6 +151,8 @@ const Checkout = () => {
   return (
     <Container className="py-4">
       <h2 className="mb-4">Checkout</h2>
+      
+      
       
       <Row>
         <Col lg={8}>
@@ -174,7 +252,6 @@ const Checkout = () => {
                     variant="primary" 
                     size="lg"
                     disabled={loading}
-                    onClick={handleSubmit}
                   >
                     {loading ? 'Processing...' : 'Place Order'}
                   </Button>
