@@ -579,9 +579,10 @@ const handleRemoveFromWishlist = async (productId) => {
                           </tr>
                         </thead>
                         <tbody>
-                          {orders.map(order => (
+                          {orders.map((order, index) => (
                             <tr key={order.id}>
-                              <td>{order?._id}</td>
+                              {/* <td>{order?._id}</td> */}
+                              <td>{index+1}</td>
                               <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                               <td>
                                 <Badge 
