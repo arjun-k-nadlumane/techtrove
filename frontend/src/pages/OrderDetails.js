@@ -155,7 +155,7 @@ const OrderDetails = () => {
     <Container className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h2>Order Details</h2>
-        <Link to="/order-history" className="btn btn-outline-secondary">
+        <Link to="/profile" className="btn btn-outline-secondary">
           <i className="bi bi-arrow-left me-1"></i>Back to Orders
         </Link>
       </div>

@@ -601,7 +601,7 @@ const handleRemoveFromWishlist = async (productId) => {
                                   variant="outline-secondary" 
                                   size="sm"
                                   as={Link}
-                                  to={`/order/${order.id}`}
+                                  to={`/order-details/${order?._id}`}
                                 >
                                   View Details
                                 </Button>
