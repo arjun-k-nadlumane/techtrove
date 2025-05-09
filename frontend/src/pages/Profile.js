@@ -581,7 +581,7 @@ const handleRemoveFromWishlist = async (productId) => {
                         <tbody>
                           {orders.map(order => (
                             <tr key={order.id}>
-                              <td>#{order.id}</td>
+                              <td>{order?._id}</td>
                               <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                               <td>
                                 <Badge 
@@ -594,7 +594,7 @@ const handleRemoveFromWishlist = async (productId) => {
                                   {order.status}
                                 </Badge>
                               </td>
-                              <td>${parseFloat(order.total).toFixed(2)}</td>
+                              <td>${parseFloat(order.totalAmount).toFixed(2)}</td>
                               <td>
                                 <Button 
                                   variant="outline-secondary" 
