@@ -1,4 +1,5 @@
 const User = require('../models/User');
+const Product = require('../models/Product');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
 
@@ -22,15 +23,20 @@ exports.getWishlist = asyncHandler(async (req, res, next) => {
  * @access  Private
  */
 exports.addToWishlist = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user.id);
-
-  const wishlist = await user.addToWishlist(req.params.productId);
-
-  res.status(200).json({
-    success: true,
-    data: wishlist
-  });
-});
+  const userId = req.user.id;
+  const user = await User.findById(userId);
+  const productId = req.params.productId;
+  const product = await Product.findById(productId);
+  if (!product) {
+    return res.status(404).json({ success: false, error: 'Product not found' });
+  }
+  if (user.wishlist.some(item => item.toString() === productId)) {
+    return res.status(400).json({ success: false, error: 'Product already in wishlist' });
+  }
+  user.wishlist.push(productId);
+  await user.save();
+  res.status(200).json({ success: true, message: 'Product added to wishlist' });
+ });
 
 /**
  * @desc    Remove item from wishlist

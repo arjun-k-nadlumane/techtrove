@@ -13,7 +13,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const services = useContext(ServiceContext);
-  const { user } = useAuth();
+  const { user, tokens } = useAuth();
   const { addToCart } = useCart();
   
   const [product, setProduct] = useState(null);
@@ -83,7 +83,8 @@ const ProductDetail = () => {
         // Check if product is in user's wishlist
         if (user) {
           try {
-            const wishlistResponse = await axios.get(`${services.customerService}/api/wishlist`);
+            const wishlistResponse = await axios.get(`${services.customerService}/api/wishlist`,{headers: {Authorization:`Bearer ${tokens}`}});
+            console.log('Wishlist:',wishlistResponse);
             const wishlist = wishlistResponse.data.data;
             setInWishlist(wishlist.some(item => item.id === parseInt(id)));
           } catch (error) {
@@ -101,7 +102,7 @@ const ProductDetail = () => {
     };
     
     fetchData();
-  }, [id, services, user]);
+  }, [id, services, user,tokens]);
   
   // Handle adding/removing from wishlist
   const handleWishlist = async () => {
@@ -112,9 +113,9 @@ const ProductDetail = () => {
     
     try {
       if (inWishlist) {
-        await axios.delete(`${services.customerService}/api/wishlist/${id}`);
+        await axios.delete(`${services.customerService}/api/wishlist/${id}`,{headers: {Authorization:`Bearer ${tokens}`}});
       } else {
-        await axios.post(`${services.customerService}/api/wishlist/${id}`);
+        await axios.post(`${services.customerService}/api/wishlist/${id}`,null,{headers: {Authorization:`Bearer ${tokens}`}});
       }
       
       setInWishlist(!inWishlist);
