@@ -36,7 +36,7 @@ exports.addToWishlist = asyncHandler(async (req, res, next) => {
   user.wishlist.push(productId);
   await user.save();
   res.status(200).json({ success: true, message: 'Product added to wishlist' });
- });
+  });
 
 /**
  * @desc    Remove item from wishlist

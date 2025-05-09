@@ -169,7 +169,7 @@ const ProductDetail = () => {
       });
       await axios.post(`${services.feedbackService}/api/reviews`, {
         product_id: parseInt(id),
-        user_id: user?._id,
+        user_id: user.id,
         username: user.name,
         rating: parseInt(reviewForm.rating),
         comment: reviewForm.comment

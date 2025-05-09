@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -113,7 +114,12 @@ public class ProductController {
     @Operation(summary = "Get featured products", description = "Returns featured products")
     @ApiResponse(responseCode = "200", description = "Featured products found")
     public ResponseEntity<List<Product>> getFeaturedProducts() {
-        return ResponseEntity.ok(productService.findFeaturedProducts());
+        List<Product> featuredProducts = productService.findFeaturedProducts();
+        Collections.shuffle(featuredProducts);
+        List<Product> selectedProducts = featuredProducts.stream()
+                .limit(4)
+                .toList();
+        return ResponseEntity.ok(selectedProducts);
     }
 
     @GetMapping("/search")
