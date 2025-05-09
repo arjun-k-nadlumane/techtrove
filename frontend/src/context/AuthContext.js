@@ -8,6 +8,7 @@ export function useAuth() {
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const [tokens,setTokens] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
@@ -19,6 +20,7 @@ export function AuthProvider({ children }) {
     if (storedUser && token) {
       try {
         setUser(JSON.parse(storedUser));
+        setTokens(token);
       } catch (e) {
         console.error('Failed to parse stored user', e);
         localStorage.removeItem('user');
@@ -49,6 +51,7 @@ export function AuthProvider({ children }) {
       setUser(data.data);
       localStorage.setItem('user', JSON.stringify(data.data));
       localStorage.setItem('token', data.token);
+      setTokens(data.token);
       return data.data;
     } catch (err) {
       setError(err.message || 'Failed to login');
@@ -99,6 +102,7 @@ export function AuthProvider({ children }) {
 
   const value = {
     user,
+    tokens,
     loading,
     error,
     login,

@@ -4,6 +4,8 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET, JWT_EXPIRE } = require('../config');
 
+require('./Product');
+
 const UserSchema = new mongoose.Schema({
   name: {
     type: String,
