@@ -72,56 +72,119 @@ const Profile = () => {
   }, [user]);
   
   // Fetch orders function
-  const fetchOrders = async () => {
-    setOrdersLoading(true);
-    setOrdersError('');
-    
-    try {
-      const response = await fetch(`${customerService}/api/orders`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch orders');
-      }
-      
-      const data = await response.json();
-      setOrders(data.data || []);
-    } catch (error) {
-      console.error('Error fetching orders:', error);
-      setOrdersError('Failed to load order history. Please try again later.');
-    } finally {
+ // src/pages/Profile.js - Update the fetchOrders function
+
+const fetchOrders = async () => {
+  setOrdersLoading(true);
+  setOrdersError('');
+  
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setOrdersError('Authentication token not found. Please log in again.');
       setOrdersLoading(false);
+      return;
     }
-  };
+    
+    console.log('Fetching orders from:', `${customerService}/api/orders`);
+    
+    const response = await fetch(`${customerService}/api/orders`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch orders: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('Orders response:', data);
+    
+    if (data.success && Array.isArray(data.data)) {
+      setOrders(data.data);
+    } else {
+      console.error('Unexpected response format:', data);
+      setOrders([]);
+    }
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    setOrdersError('Failed to load order history. Please try again later.');
+  } finally {
+    setOrdersLoading(false);
+  }
+};
   
   // Fetch wishlist function
-  const fetchWishlist = async () => {
-    setWishlistLoading(true);
-    setWishlistError('');
-    
-    try {
-      const response = await fetch(`${customerService}/api/wishlist`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to fetch wishlist');
-      }
-      
-      const data = await response.json();
-      setWishlist(data.data || []);
-    } catch (error) {
-      console.error('Error fetching wishlist:', error);
-      setWishlistError('Failed to load wishlist. Please try again later.');
-    } finally {
+
+const fetchWishlist = async () => {
+  setWishlistLoading(true);
+  setWishlistError('');
+  
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setWishlistError('Authentication token not found. Please log in again.');
       setWishlistLoading(false);
+      return;
     }
-  };
+    
+    console.log('Fetching wishlist from:', `${customerService}/api/wishlist`);
+    
+    const response = await fetch(`${customerService}/api/wishlist`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to fetch wishlist: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    console.log('Wishlist response:', data);
+    
+    if (data.success && Array.isArray(data.data)) {
+      setWishlist(data.data);
+    } else {
+      console.error('Unexpected wishlist response format:', data);
+      setWishlist([]);
+    }
+  } catch (error) {
+    console.error('Error fetching wishlist:', error);
+    setWishlistError('Failed to load wishlist. Please try again later.');
+  } finally {
+    setWishlistLoading(false);
+  }
+};
+
+// Also update handleRemoveFromWishlist
+const handleRemoveFromWishlist = async (productId) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setWishlistError('Authentication token not found. Please log in again.');
+      return;
+    }
+    
+    const response = await fetch(`${customerService}/api/wishlist/${productId}`, {
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to remove from wishlist');
+    }
+    
+    // Update wishlist state
+    fetchWishlist();
+  } catch (error) {
+    console.error('Failed to remove from wishlist:', error);
+    setWishlistError('Failed to remove item from wishlist. Please try again later.');
+  }
+};
   
   // Handle profile form submission
   const handleProfileSubmit = async (e) => {
@@ -224,26 +287,6 @@ const Profile = () => {
     }));
   };
   
-  // Handle removing item from wishlist
-  const handleRemoveFromWishlist = async (productId) => {
-    try {
-      const response = await fetch(`${customerService}/api/wishlist/${productId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error('Failed to remove from wishlist');
-      }
-      
-      // Update wishlist state
-      fetchWishlist();
-    } catch (error) {
-      console.error('Failed to remove from wishlist:', error);
-    }
-  };
   
   if (!user) {
     return null; // Don't render anything if not logged in

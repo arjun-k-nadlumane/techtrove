@@ -28,25 +28,14 @@ const Cart = () => {
 
   };
 
-  const handleCheckout = () => {
-
-    if (!user) {
-
-      navigate('/login', { state: { from: { pathname: '/checkout' } } });
-
-    } else {
-
-      // Simulate checkout success
-
-      alert('Order placed successfully!');
-
-      clearCart();
-
-      navigate('/');
-
-    }
-
-  };
+const handleCheckout = () => {
+  if (!user) {
+    navigate('/login', { state: { from: { pathname: '/checkout' } } });
+  } else {
+    // Just navigate to checkout page instead of completing checkout here
+    navigate('/checkout');
+  }
+};
 
   return (
 <Container className="py-4">

@@ -3,11 +3,11 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import { Container } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
- 
+
 // Components
 import Header from './components/common/Header';
 import Footer from './components/common/Footer';
- 
+
 // Pages
 import Home from './pages/Home';
 import ProductList from './pages/ProductList';
@@ -15,14 +15,16 @@ import ProductDetail from './pages/ProductDetail';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Cart from './pages/Cart';
+import Profile from './pages/Profile';
+import Checkout from './pages/Checkout';
+import OrderConfirmation from './pages/OrderConfirmation';
 import NotFound from './pages/NotFound';
-import Profile from './pages/Profile'; // Import the Profile component
- 
+
 // Context
 import { ServiceContext } from './services/ServiceContext';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
- 
+
 function App() {
   // In a real app, these services would be discovered dynamically
   // For the demo, we're hardcoding the URLs
@@ -31,7 +33,7 @@ function App() {
     productService: 'http://localhost:8082',
     feedbackService: 'http://localhost:8083'
   });
- 
+
   return (
     <Router>
       <ServiceContext.Provider value={services}>
@@ -48,8 +50,10 @@ function App() {
                     <Route path="/product/:id" element={<ProductDetail />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/register" element={<Register />} />
+                    <Route path="/profile" element={<Profile />} />
                     <Route path="/cart" element={<Cart />} />
-                    <Route path="/profile" element={<Profile />} /> {/* Add this line */}
+                    <Route path="/checkout" element={<Checkout />} />
+                    <Route path="/order-confirmation/:id" element={<OrderConfirmation />} />
                     <Route path="/404" element={<NotFound />} />
                     <Route path="*" element={<Navigate to="/404" />} />
                   </Routes>
@@ -63,5 +67,5 @@ function App() {
     </Router>
   );
 }
- 
+
 export default App;

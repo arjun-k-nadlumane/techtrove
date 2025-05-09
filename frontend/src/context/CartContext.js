@@ -87,61 +87,66 @@ export function CartProvider({ children }) {
   };
 
   // Checkout function
-  const checkout = async (shippingDetails) => {
-    if (!user) {
-      throw new Error('You must be logged in to checkout');
+ // src/context/CartContext.js - Update the checkout function
+
+const checkout = async (shippingDetails) => {
+  if (!user) {
+    throw new Error('You must be logged in to checkout');
+  }
+  
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('Authentication token not found');
     }
     
-    try {
-      const orderData = {
-        items: cart.map(item => ({
-          productId: item.id,
-          name: item.name,
-          price: item.price,
-          quantity: item.quantity
-        })),
-        shippingDetails,
-        totalAmount: getCartTotal()
-      };
-      
-      const response = await fetch(`${customerService}/api/orders`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${localStorage.getItem('token')}`
-        },
-        body: JSON.stringify(orderData)
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to create order');
-      }
-      
-      const data = await response.json();
-      clearCart();
-      return data.data;
-    } catch (error) {
-      console.error('Checkout error:', error);
-      
-      // Fallback for demo purposes if backend isn't available
-      if (!customerService || error.message.includes('Failed to fetch')) {
-        // Create mock order
-        const mockOrder = {
-          id: Math.floor(Math.random() * 10000),
-          status: 'processing',
-          items: [...cart],
-          totalAmount: getCartTotal(),
-          createdAt: new Date().toISOString()
-        };
-        
-        clearCart();
-        return mockOrder;
-      }
-      
-      throw error;
+    // Ensure we have all required shipping details
+    const completeShippingDetails = {
+      addressLine1: shippingDetails.addressLine1 || '123 Default Street',
+      city: shippingDetails.city || 'Default City',
+      state: shippingDetails.state || 'Default State',
+      postalCode: shippingDetails.postalCode || '12345',
+      country: shippingDetails.country || 'USA'
+    };
+    
+    // Prepare order data with complete items info
+    const orderData = {
+      items: cart.map(item => ({
+        productId: item.id,
+        name: item.name,
+        price: item.price,
+        quantity: item.quantity
+      })),
+      shippingDetails: completeShippingDetails,
+      totalAmount: getCartTotal()
+    };
+    
+    console.log('Submitting order:', orderData);
+    console.log('Using token:', token.substring(0, 15) + '...');
+    
+    const response = await fetch(`${customerService}/api/orders`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify(orderData)
+    });
+    
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Order creation failed:', errorData);
+      throw new Error(errorData.error || 'Failed to create order');
     }
-  };
+    
+    const data = await response.json();
+    clearCart();
+    return data.data;
+  } catch (error) {
+    console.error('Checkout error:', error);
+    throw error;
+  }
+};
 
   const value = {
     cart,

@@ -1,3 +1,5 @@
+// controllers/orders.js in Customer Service - Update
+
 const Order = require('../models/Order');
 const ErrorResponse = require('../utils/errorResponse');
 const asyncHandler = require('../middleware/async');
@@ -11,9 +13,15 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
   // Add user to request body
   req.body.user = req.user.id;
   
-  // Check for required fields
-  if (!req.body.items || !req.body.items.length || !req.body.shippingDetails) {
-    return next(new ErrorResponse('Please provide items and shipping details', 400));
+  console.log('Creating order:', req.body);
+  
+  // Validate
+  if (!req.body.items || !req.body.items.length) {
+    return next(new ErrorResponse('Please provide order items', 400));
+  }
+  
+  if (!req.body.shippingDetails) {
+    return next(new ErrorResponse('Please provide shipping details', 400));
   }
   
   // Create order
@@ -31,7 +39,11 @@ exports.createOrder = asyncHandler(async (req, res, next) => {
  * @access  Private
  */
 exports.getOrders = asyncHandler(async (req, res, next) => {
+  console.log('Finding orders for user:', req.user.id);
+  
   const orders = await Order.find({ user: req.user.id }).sort('-createdAt');
+  
+  console.log('Found orders:', orders.length);
   
   res.status(200).json({
     success: true,

@@ -1,3 +1,5 @@
+// models/Order.js in Customer Service - Ensure this file exists and has this content
+
 const mongoose = require('mongoose');
 
 const OrderSchema = new mongoose.Schema({
@@ -48,7 +50,7 @@ const OrderSchema = new mongoose.Schema({
     country: {
       type: String,
       required: true,
-      default: 'USA'
+      default: 'India'
     }
   },
   totalAmount: {
@@ -59,13 +61,13 @@ const OrderSchema = new mongoose.Schema({
     type: String,
     required: true,
     enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
-    default: 'pending'
+    default: 'processing'
   },
   paymentStatus: {
     type: String,
     required: true,
     enum: ['pending', 'completed', 'failed', 'refunded'],
-    default: 'pending'
+    default: 'completed'
   },
   createdAt: {
     type: Date,
