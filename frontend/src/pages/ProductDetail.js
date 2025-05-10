@@ -7,7 +7,9 @@ import { ServiceContext } from '../services/ServiceContext';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
 import { withCircuitBreaker } from '../services/serviceDiscovery';
+import { useWishlist } from '../context/WishlistContext';
 import axios from 'axios';
+import WishlistButton from '../components/common/WishlistButton';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -290,13 +292,7 @@ const ProductDetail = () => {
             >
               <FaShoppingCart className="me-2" /> Add to Cart
             </Button>
-            
-            <Button 
-              variant={inWishlist ? "danger" : "outline-danger"}
-              onClick={handleWishlist}
-            >
-              {inWishlist ? <FaHeart /> : <FaRegHeart />}
-            </Button>
+            <WishlistButton product={product} />
           </div>
         </Col>
       </Row>

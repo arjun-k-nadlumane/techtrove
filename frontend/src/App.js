@@ -18,14 +18,16 @@ import Cart from './pages/Cart';
 import Profile from './pages/Profile';
 import Checkout from './pages/Checkout';
 import OrderConfirmation from './pages/OrderConfirmation';
-import OrderHistory from './pages/OrderHistory'; // Add the new OrderHistory page
-import OrderDetails from './pages/OrderDetails'; // Add the new OrderDetails page
+import OrderHistory from './pages/OrderHistory';
+import OrderDetails from './pages/OrderDetails';
+import Wishlist from './pages/Wishlist'; // Import the new Wishlist page
 import NotFound from './pages/NotFound';
 
 // Context
 import { ServiceContext } from './services/ServiceContext';
 import { AuthProvider } from './context/AuthContext';
 import { CartProvider } from './context/CartContext';
+import { WishlistProvider } from './context/WishlistContext'; // Import WishlistProvider
 
 // Protected route component
 const ProtectedRoute = ({ children }) => {
@@ -51,59 +53,66 @@ function App() {
       <ServiceContext.Provider value={services}>
         <AuthProvider>
           <CartProvider>
-            <div className="d-flex flex-column min-vh-100">
-              <Header />
-              <main className="flex-grow-1 py-3">
-                <Container>
-                  <Routes>
-                    <Route path="/" element={<Home />} />
-                    <Route path="/products" element={<ProductList />} />
-                    <Route path="/products/:category" element={<ProductList />} />
-                    <Route path="/product/:id" element={<ProductDetail />} />
-                    <Route path="/login" element={<Login />} />
-                    <Route path="/register" element={<Register />} />
-                    <Route path="/cart" element={<Cart />} />
+            <WishlistProvider> {/* Add WishlistProvider here */}
+              <div className="d-flex flex-column min-vh-100">
+                <Header />
+                <main className="flex-grow-1 py-3">
+                  <Container>
+                    <Routes>
+                      <Route path="/" element={<Home />} />
+                      <Route path="/products" element={<ProductList />} />
+                      <Route path="/products/:category" element={<ProductList />} />
+                      <Route path="/product/:id" element={<ProductDetail />} />
+                      <Route path="/login" element={<Login />} />
+                      <Route path="/register" element={<Register />} />
+                      <Route path="/cart" element={<Cart />} />
 
-                    {/* Protected routes with explicit protection */}
-                    <Route path="/profile" element={
-                      <ProtectedRoute>
-                        <Profile />
-                      </ProtectedRoute>
-                    } />
+                      {/* Protected routes with explicit protection */}
+                      <Route path="/profile" element={
+                        <ProtectedRoute>
+                          <Profile />
+                        </ProtectedRoute>
+                      } />
 
-                    <Route path="/checkout" element={
-                      <ProtectedRoute>
-                        <Checkout />
-                      </ProtectedRoute>
-                    } />
+                      <Route path="/checkout" element={
+                        <ProtectedRoute>
+                          <Checkout />
+                        </ProtectedRoute>
+                      } />
 
-                    <Route path="/order-confirmation/:id" element={
-                      <ProtectedRoute>
-                        <OrderConfirmation />
-                      </ProtectedRoute>
-                    } />
+                      <Route path="/order-confirmation/:id" element={
+                        <ProtectedRoute>
+                          <OrderConfirmation />
+                        </ProtectedRoute>
+                      } />
 
-                    {/* New order history route */}
-                    <Route path="/order-history" element={
-                      <ProtectedRoute>
-                        <OrderHistory />
-                      </ProtectedRoute>
-                    } />
+                      <Route path="/order-history" element={
+                        <ProtectedRoute>
+                          <OrderHistory />
+                        </ProtectedRoute>
+                      } />
 
-                    {/* New order details route */}
-                    <Route path="/order-details/:id" element={
-                      <ProtectedRoute>
-                        <OrderDetails />
-                      </ProtectedRoute>
-                    } />
+                      <Route path="/order-details/:id" element={
+                        <ProtectedRoute>
+                          <OrderDetails />
+                        </ProtectedRoute>
+                      } />
 
-                    <Route path="/404" element={<NotFound />} />
-                    <Route path="*" element={<Navigate to="/404" />} />
-                  </Routes>
-                </Container>
-              </main>
-              <Footer />
-            </div>
+                      {/* Add new wishlist route */}
+                      <Route path="/wishlist" element={
+                        <ProtectedRoute>
+                          <Wishlist />
+                        </ProtectedRoute>
+                      } />
+
+                      <Route path="/404" element={<NotFound />} />
+                      <Route path="*" element={<Navigate to="/404" />} />
+                    </Routes>
+                  </Container>
+                </main>
+                <Footer />
+              </div>
+            </WishlistProvider>
           </CartProvider>
         </AuthProvider>
       </ServiceContext.Provider>

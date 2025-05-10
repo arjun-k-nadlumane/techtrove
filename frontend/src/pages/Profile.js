@@ -3,11 +3,15 @@ import { Container, Row, Col, Card, Tab, Nav, Button, Form, Alert, Table, Badge,
 import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { ServiceContext } from '../services/ServiceContext';
+import { useWishlist } from '../context/WishlistContext'; // Import the WishlistContext
 
 const Profile = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { customerService } = useContext(ServiceContext);
+  
+  // Get wishlist state and functions from WishlistContext
+  const { wishlist, loading: wishlistLoading, error: wishlistError, removeFromWishlist } = useWishlist();
   
   // State for profile data
   const [profileData, setProfileData] = useState({
@@ -38,11 +42,6 @@ const Profile = () => {
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState('');
   
-  // State for wishlist
-  const [wishlist, setWishlist] = useState([]);
-  const [wishlistLoading, setWishlistLoading] = useState(false);
-  const [wishlistError, setWishlistError] = useState('');
-  
   // Redirect if not logged in
   useEffect(() => {
     if (!user) {
@@ -64,127 +63,47 @@ const Profile = () => {
     }
   }, [user]);
   
-  // Fetch wishlist
-  useEffect(() => {
-    if (user) {
-      fetchWishlist();
-    }
-  }, [user]);
-  
   // Fetch orders function
- // src/pages/Profile.js - Update the fetchOrders function
-
-const fetchOrders = async () => {
-  setOrdersLoading(true);
-  setOrdersError('');
-  
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setOrdersError('Authentication token not found. Please log in again.');
+  const fetchOrders = async () => {
+    setOrdersLoading(true);
+    setOrdersError('');
+    
+    try {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setOrdersError('Authentication token not found. Please log in again.');
+        setOrdersLoading(false);
+        return;
+      }
+      
+      console.log('Fetching orders from:', `${customerService}/api/orders`);
+      
+      const response = await fetch(`${customerService}/api/orders`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to fetch orders: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      console.log('Orders response:', data);
+      
+      if (data.success && Array.isArray(data.data)) {
+        setOrders(data.data);
+      } else {
+        console.error('Unexpected response format:', data);
+        setOrders([]);
+      }
+    } catch (error) {
+      console.error('Error fetching orders:', error);
+      setOrdersError('Failed to load order history. Please try again later.');
+    } finally {
       setOrdersLoading(false);
-      return;
     }
-    
-    console.log('Fetching orders from:', `${customerService}/api/orders`);
-    
-    const response = await fetch(`${customerService}/api/orders`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch orders: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    console.log('Orders response:', data);
-    
-    if (data.success && Array.isArray(data.data)) {
-      setOrders(data.data);
-    } else {
-      console.error('Unexpected response format:', data);
-      setOrders([]);
-    }
-  } catch (error) {
-    console.error('Error fetching orders:', error);
-    setOrdersError('Failed to load order history. Please try again later.');
-  } finally {
-    setOrdersLoading(false);
-  }
-};
-  
-  // Fetch wishlist function
-
-const fetchWishlist = async () => {
-  setWishlistLoading(true);
-  setWishlistError('');
-  
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setWishlistError('Authentication token not found. Please log in again.');
-      setWishlistLoading(false);
-      return;
-    }
-    
-    console.log('Fetching wishlist from:', `${customerService}/api/wishlist`);
-    
-    const response = await fetch(`${customerService}/api/wishlist`, {
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error(`Failed to fetch wishlist: ${response.status}`);
-    }
-    
-    const data = await response.json();
-    console.log('Wishlist response:', data);
-    
-    if (data.success && Array.isArray(data.data)) {
-      setWishlist(data.data);
-    } else {
-      console.error('Unexpected wishlist response format:', data);
-      setWishlist([]);
-    }
-  } catch (error) {
-    console.error('Error fetching wishlist:', error);
-    setWishlistError('Failed to load wishlist. Please try again later.');
-  } finally {
-    setWishlistLoading(false);
-  }
-};
-
-// Also update handleRemoveFromWishlist
-const handleRemoveFromWishlist = async (productId) => {
-  try {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setWishlistError('Authentication token not found. Please log in again.');
-      return;
-    }
-    
-    const response = await fetch(`${customerService}/api/wishlist/${productId}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to remove from wishlist');
-    }
-    
-    // Update wishlist state
-    fetchWishlist();
-  } catch (error) {
-    console.error('Failed to remove from wishlist:', error);
-    setWishlistError('Failed to remove item from wishlist. Please try again later.');
-  }
-};
+  };
   
   // Handle profile form submission
   const handleProfileSubmit = async (e) => {
@@ -287,6 +206,10 @@ const handleRemoveFromWishlist = async (productId) => {
     }));
   };
   
+  // Handle removing item from wishlist
+  const handleRemoveFromWishlist = (productId) => {
+    removeFromWishlist(productId);
+  };
   
   if (!user) {
     return null; // Don't render anything if not logged in
@@ -490,7 +413,7 @@ const handleRemoveFromWishlist = async (productId) => {
                     </Form>
                   </Tab.Pane>
                   
-                  {/* Wishlist Tab */}
+                  {/* Wishlist Tab - Updated to use WishlistContext */}
                   <Tab.Pane eventKey="wishlist">
                     <h4 className="mb-4">My Wishlist</h4>
                     
@@ -511,11 +434,11 @@ const handleRemoveFromWishlist = async (productId) => {
                       <div className="wishlist-items">
                         <Row xs={1} md={2} lg={3} className="g-4">
                           {wishlist.map(product => (
-                            <Col key={product.id}>
+                            <Col key={product._id || product.id}>
                               <Card className="h-100 shadow-sm">
                                 <Card.Img 
                                   variant="top" 
-                                  src={product.imageUrl || '/images/product-placeholder.jpg'} 
+                                  src={product.image || '/images/product-placeholder.jpg'} 
                                   alt={product.name}
                                   style={{ height: '160px', objectFit: 'cover' }}
                                 />
@@ -529,14 +452,14 @@ const handleRemoveFromWishlist = async (productId) => {
                                       variant="primary" 
                                       size="sm"
                                       as={Link}
-                                      to={`/product/${product.id}`}
+                                      to={`/product/${product._id || product.id}`}
                                     >
                                       View Details
                                     </Button>
                                     <Button 
                                       variant="outline-danger" 
                                       size="sm"
-                                      onClick={() => handleRemoveFromWishlist(product.id)}
+                                      onClick={() => handleRemoveFromWishlist(product._id || product.id)}
                                     >
                                       <i className="bi bi-trash"></i>
                                     </Button>
@@ -580,9 +503,8 @@ const handleRemoveFromWishlist = async (productId) => {
                         </thead>
                         <tbody>
                           {orders.map((order, index) => (
-                            <tr key={order.id}>
-                              {/* <td>{order?._id}</td> */}
-                              <td>{index+1}</td>
+                            <tr key={order._id || index}>
+                              <td>{order._id || `#${index+1}`}</td>
                               <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                               <td>
                                 <Badge 
@@ -601,7 +523,7 @@ const handleRemoveFromWishlist = async (productId) => {
                                   variant="outline-secondary" 
                                   size="sm"
                                   as={Link}
-                                  to={`/order-details/${order?._id}`}
+                                  to={`/order-details/${order._id}`}
                                 >
                                   View Details
                                 </Button>
