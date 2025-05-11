@@ -64,7 +64,7 @@ The application follows a microservices architecture with the following componen
 
 3. Set up Customer Service:
    ```
-   cd ../customer-service
+   cd customer-service
    npm install
    npm start
    ```
@@ -72,14 +72,14 @@ The application follows a microservices architecture with the following componen
 
 4. Set up Product Service:
    ```
-   cd ../product-service
+   cd product-service
    ./mvnw spring-boot:run
    ```
    Product Service will be available at http://localhost:8082
 
 5. Set up Feedback Service:
    ```
-   cd ../feedback-service
+   cd feedback-service
    pip install -r requirements.txt
    python app.py
    ```
@@ -87,7 +87,7 @@ The application follows a microservices architecture with the following componen
 
 6. Set up Frontend:
    ```
-   cd ../frontend
+   cd frontend
    npm install
    npm start
    ```
