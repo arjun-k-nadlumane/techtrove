@@ -9,39 +9,39 @@ const Profile = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { customerService } = useContext(ServiceContext);
-  
+
   // Get wishlist state and functions from WishlistContext
   const { wishlist, loading: wishlistLoading, error: wishlistError, removeFromWishlist } = useWishlist();
-  
+
   // State for profile data
   const [profileData, setProfileData] = useState({
     name: user?.name || '',
     email: user?.email || '',
     phone: user?.phone || ''
   });
-  
+
   // State for password form
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
     confirmPassword: ''
   });
-  
+
   // State for profile operations
   const [profileLoading, setProfileLoading] = useState(false);
   const [profileSuccess, setProfileSuccess] = useState('');
   const [profileError, setProfileError] = useState('');
-  
+
   // State for password operations
   const [passwordLoading, setPasswordLoading] = useState(false);
   const [passwordSuccess, setPasswordSuccess] = useState('');
   const [passwordError, setPasswordError] = useState('');
-  
+
   // State for orders
   const [orders, setOrders] = useState([]);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [ordersError, setOrdersError] = useState('');
-  
+
   // Redirect if not logged in
   useEffect(() => {
     if (!user) {
@@ -55,19 +55,19 @@ const Profile = () => {
       });
     }
   }, [user, navigate]);
-  
+
   // Fetch orders
   useEffect(() => {
     if (user) {
       fetchOrders();
     }
   }, [user]);
-  
+
   // Fetch orders function
   const fetchOrders = async () => {
     setOrdersLoading(true);
     setOrdersError('');
-    
+
     try {
       const token = localStorage.getItem('token');
       if (!token) {
@@ -75,22 +75,22 @@ const Profile = () => {
         setOrdersLoading(false);
         return;
       }
-      
+
       console.log('Fetching orders from:', `${customerService}/api/orders`);
-      
+
       const response = await fetch(`${customerService}/api/orders`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      
+
       if (!response.ok) {
         throw new Error(`Failed to fetch orders: ${response.status}`);
       }
-      
+
       const data = await response.json();
       console.log('Orders response:', data);
-      
+
       if (data.success && Array.isArray(data.data)) {
         setOrders(data.data);
       } else {
@@ -104,14 +104,14 @@ const Profile = () => {
       setOrdersLoading(false);
     }
   };
-  
+
   // Handle profile form submission
   const handleProfileSubmit = async (e) => {
     e.preventDefault();
     setProfileLoading(true);
     setProfileSuccess('');
     setProfileError('');
-    
+
     try {
       const response = await fetch(`${customerService}/api/auth/updatedetails`, {
         method: 'PUT',
@@ -121,20 +121,20 @@ const Profile = () => {
         },
         body: JSON.stringify(profileData)
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to update profile');
       }
-      
+
       const responseData = await response.json();
-      
+
       // Update stored user data
       if (responseData.data) {
         const updatedUser = { ...user, ...responseData.data };
         localStorage.setItem('user', JSON.stringify(updatedUser));
       }
-      
+
       setProfileSuccess('Profile updated successfully!');
     } catch (error) {
       setProfileError(error.message || 'Failed to update profile. Please try again.');
@@ -142,21 +142,21 @@ const Profile = () => {
       setProfileLoading(false);
     }
   };
-  
+
   // Handle password form submission
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validate passwords match
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       setPasswordError('New passwords do not match');
       return;
     }
-    
+
     setPasswordLoading(true);
     setPasswordSuccess('');
     setPasswordError('');
-    
+
     try {
       const response = await fetch(`${customerService}/api/auth/updatepassword`, {
         method: 'PUT',
@@ -169,12 +169,12 @@ const Profile = () => {
           newPassword: passwordData.newPassword
         })
       });
-      
+
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.error || 'Failed to update password');
       }
-      
+
       setPasswordSuccess('Password updated successfully!');
       setPasswordData({
         currentPassword: '',
@@ -187,7 +187,7 @@ const Profile = () => {
       setPasswordLoading(false);
     }
   };
-  
+
   // Handle profile form change
   const handleProfileChange = (e) => {
     const { name, value } = e.target;
@@ -196,7 +196,7 @@ const Profile = () => {
       [name]: value
     }));
   };
-  
+
   // Handle password form change
   const handlePasswordChange = (e) => {
     const { name, value } = e.target;
@@ -205,20 +205,20 @@ const Profile = () => {
       [name]: value
     }));
   };
-  
+
   // Handle removing item from wishlist
   const handleRemoveFromWishlist = (productId) => {
     removeFromWishlist(productId);
   };
-  
+
   if (!user) {
     return null; // Don't render anything if not logged in
   }
-  
+
   return (
     <Container className="py-4">
       <h2 className="mb-4">My Account</h2>
-      
+
       <Tab.Container id="profile-tabs" defaultActiveKey="profile">
         <Row>
           <Col md={3} className="mb-4">
@@ -248,9 +248,9 @@ const Profile = () => {
                 </Nav>
               </Card.Body>
               <Card.Footer>
-                <Button 
-                  variant="outline-danger" 
-                  size="sm" 
+                <Button
+                  variant="outline-danger"
+                  size="sm"
                   className="w-100"
                   onClick={() => {
                     logout();
@@ -263,7 +263,7 @@ const Profile = () => {
               </Card.Footer>
             </Card>
           </Col>
-          
+
           <Col md={9}>
             <Card className="shadow-sm">
               <Card.Body>
@@ -271,16 +271,16 @@ const Profile = () => {
                   {/* Profile Tab */}
                   <Tab.Pane eventKey="profile">
                     <h4 className="mb-4">Profile Information</h4>
-                    
+
                     {profileSuccess && <Alert variant="success">{profileSuccess}</Alert>}
                     {profileError && <Alert variant="danger">{profileError}</Alert>}
-                    
+
                     <Form onSubmit={handleProfileSubmit}>
                       <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3}>Full Name</Form.Label>
                         <Col sm={9}>
-                          <Form.Control 
-                            type="text" 
+                          <Form.Control
+                            type="text"
                             name="name"
                             value={profileData.name}
                             onChange={handleProfileChange}
@@ -288,12 +288,12 @@ const Profile = () => {
                           />
                         </Col>
                       </Form.Group>
-                      
+
                       <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3}>Email Address</Form.Label>
                         <Col sm={9}>
-                          <Form.Control 
-                            type="email" 
+                          <Form.Control
+                            type="email"
                             name="email"
                             value={profileData.email}
                             onChange={handleProfileChange}
@@ -301,22 +301,22 @@ const Profile = () => {
                           />
                         </Col>
                       </Form.Group>
-                      
+
                       <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={3}>Phone Number</Form.Label>
                         <Col sm={9}>
-                          <Form.Control 
-                            type="tel" 
+                          <Form.Control
+                            type="tel"
                             name="phone"
                             value={profileData.phone || ''}
                             onChange={handleProfileChange}
                           />
                         </Col>
                       </Form.Group>
-                      
+
                       <div className="text-end">
-                        <Button 
-                          type="submit" 
+                        <Button
+                          type="submit"
                           variant="primary"
                           disabled={profileLoading}
                         >
@@ -337,20 +337,20 @@ const Profile = () => {
                       </div>
                     </Form>
                   </Tab.Pane>
-                  
+
                   {/* Password Tab */}
                   <Tab.Pane eventKey="password">
                     <h4 className="mb-4">Change Password</h4>
-                    
+
                     {passwordSuccess && <Alert variant="success">{passwordSuccess}</Alert>}
                     {passwordError && <Alert variant="danger">{passwordError}</Alert>}
-                    
+
                     <Form onSubmit={handlePasswordSubmit}>
                       <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={4}>Current Password</Form.Label>
                         <Col sm={8}>
-                          <Form.Control 
-                            type="password" 
+                          <Form.Control
+                            type="password"
                             name="currentPassword"
                             value={passwordData.currentPassword}
                             onChange={handlePasswordChange}
@@ -358,12 +358,12 @@ const Profile = () => {
                           />
                         </Col>
                       </Form.Group>
-                      
+
                       <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={4}>New Password</Form.Label>
                         <Col sm={8}>
-                          <Form.Control 
-                            type="password" 
+                          <Form.Control
+                            type="password"
                             name="newPassword"
                             value={passwordData.newPassword}
                             onChange={handlePasswordChange}
@@ -375,12 +375,12 @@ const Profile = () => {
                           </Form.Text>
                         </Col>
                       </Form.Group>
-                      
+
                       <Form.Group as={Row} className="mb-3">
                         <Form.Label column sm={4}>Confirm New Password</Form.Label>
                         <Col sm={8}>
-                          <Form.Control 
-                            type="password" 
+                          <Form.Control
+                            type="password"
                             name="confirmPassword"
                             value={passwordData.confirmPassword}
                             onChange={handlePasswordChange}
@@ -388,10 +388,10 @@ const Profile = () => {
                           />
                         </Col>
                       </Form.Group>
-                      
+
                       <div className="text-end">
-                        <Button 
-                          type="submit" 
+                        <Button
+                          type="submit"
                           variant="primary"
                           disabled={passwordLoading}
                         >
@@ -412,13 +412,13 @@ const Profile = () => {
                       </div>
                     </Form>
                   </Tab.Pane>
-                  
+
                   {/* Wishlist Tab - Updated to use WishlistContext */}
                   <Tab.Pane eventKey="wishlist">
                     <h4 className="mb-4">My Wishlist</h4>
-                    
+
                     {wishlistError && <Alert variant="danger">{wishlistError}</Alert>}
-                    
+
                     {wishlistLoading ? (
                       <div className="text-center py-4">
                         <Spinner animation="border" role="status">
@@ -436,10 +436,11 @@ const Profile = () => {
                           {wishlist.map(product => (
                             <Col key={product._id || product.id}>
                               <Card className="h-100 shadow-sm">
-                                <Card.Img 
-                                  variant="top" 
-                                  src={product.image || '/images/product-placeholder.jpg'} 
+                                <Card.Img
+                                  variant="top"
+                                  src={product.imageUrl || 'https://via.placeholder.com/400x400?text=Product+Image'}
                                   alt={product.name}
+                                  fluid
                                   style={{ height: '160px', objectFit: 'cover' }}
                                 />
                                 <Card.Body>
@@ -448,16 +449,16 @@ const Profile = () => {
                                     ${parseFloat(product.price).toFixed(2)}
                                   </Card.Text>
                                   <div className="d-flex justify-content-between">
-                                    <Button 
-                                      variant="primary" 
+                                    <Button
+                                      variant="primary"
                                       size="sm"
                                       as={Link}
                                       to={`/product/${product._id || product.id}`}
                                     >
                                       View Details
                                     </Button>
-                                    <Button 
-                                      variant="outline-danger" 
+                                    <Button
+                                      variant="outline-danger"
                                       size="sm"
                                       onClick={() => handleRemoveFromWishlist(product._id || product.id)}
                                     >
@@ -472,13 +473,13 @@ const Profile = () => {
                       </div>
                     )}
                   </Tab.Pane>
-                  
+
                   {/* Orders Tab */}
                   <Tab.Pane eventKey="orders">
                     <h4 className="mb-4">Order History</h4>
-                    
+
                     {ordersError && <Alert variant="danger">{ordersError}</Alert>}
-                    
+
                     {ordersLoading ? (
                       <div className="text-center py-4">
                         <Spinner animation="border" role="status">
@@ -504,14 +505,14 @@ const Profile = () => {
                         <tbody>
                           {orders.map((order, index) => (
                             <tr key={order._id || index}>
-                              <td>{order._id || `#${index+1}`}</td>
+                              <td>{order._id || `#${index + 1}`}</td>
                               <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                               <td>
-                                <Badge 
+                                <Badge
                                   bg={
-                                    order.status === 'completed' ? 'success' : 
-                                    order.status === 'processing' ? 'primary' : 
-                                    order.status === 'shipped' ? 'info' : 'secondary'
+                                    order.status === 'completed' ? 'success' :
+                                      order.status === 'processing' ? 'primary' :
+                                        order.status === 'shipped' ? 'info' : 'secondary'
                                   }
                                 >
                                   {order.status}
@@ -519,8 +520,8 @@ const Profile = () => {
                               </td>
                               <td>${parseFloat(order.totalAmount).toFixed(2)}</td>
                               <td>
-                                <Button 
-                                  variant="outline-secondary" 
+                                <Button
+                                  variant="outline-secondary"
                                   size="sm"
                                   as={Link}
                                   to={`/order-details/${order._id}`}

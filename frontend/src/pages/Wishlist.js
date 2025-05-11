@@ -8,19 +8,19 @@ import { useCart } from '../context/CartContext';
 const Wishlist = () => {
   const { wishlist, loading, removeFromWishlist, clearWishlist } = useWishlist();
   const { addToCart } = useCart();
-  
+
   const handleAddToCart = (product) => {
     addToCart(product, 1);
     // Optionally show a notification
     alert(`${product.name} added to cart!`);
   };
-  
+
   const handleClearWishlist = () => {
     if (window.confirm('Are you sure you want to clear your wishlist?')) {
       clearWishlist();
     }
   };
-  
+
   return (
     <Container className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
@@ -29,13 +29,13 @@ const Wishlist = () => {
           <i className="bi bi-person me-1"></i>Back to Profile
         </Link>
       </div>
-      
+
       <Card className="shadow-sm">
         <Card.Header className="bg-light d-flex justify-content-between align-items-center">
           <h5 className="mb-0">Wishlist Items</h5>
           {wishlist.length > 0 && (
-            <Button 
-              variant="outline-danger" 
+            <Button
+              variant="outline-danger"
               size="sm"
               onClick={handleClearWishlist}
             >
@@ -63,24 +63,26 @@ const Wishlist = () => {
               {wishlist.map((product) => (
                 <Col key={product._id || product.id}>
                   <Card className="h-100 product-card position-relative">
-                    <Button 
-                      variant="danger" 
-                      size="sm" 
+                    <Button
+                      variant="danger"
+                      size="sm"
                       className="position-absolute top-0 end-0 m-2"
                       onClick={() => removeFromWishlist(product._id || product.id)}
                       title="Remove from wishlist"
                     >
                       <i className="bi bi-x-lg"></i>
                     </Button>
-                    
+
                     <Link to={`/product/${product._id || product.id}`} className="text-decoration-none">
-                      <Card.Img 
-                        variant="top" 
-                        src={product.image || 'https://via.placeholder.com/300'}
+                      <Card.Img
+                        variant="top"
+                        src={product.imageUrl || 'https://via.placeholder.com/400x400?text=Product+Image'}
                         alt={product.name}
+                        fluid
                         className="product-image p-3"
                         style={{ height: '200px', objectFit: 'contain' }}
                       />
+
                       <Card.Body>
                         <Card.Title className="text-truncate text-dark">{product.name}</Card.Title>
                         <Card.Text className="text-primary fw-bold">
@@ -88,10 +90,10 @@ const Wishlist = () => {
                         </Card.Text>
                       </Card.Body>
                     </Link>
-                    
+
                     <Card.Footer className="bg-white border-top-0">
                       <div className="d-grid">
-                        <Button 
+                        <Button
                           variant="primary"
                           onClick={() => handleAddToCart(product)}
                         >
