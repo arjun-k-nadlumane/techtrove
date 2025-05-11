@@ -2,6 +2,13 @@
 
 ## System Architecture
 
+# Highlevel Architecture Diagram:
+![image](https://github.com/user-attachments/assets/1bf51f4e-f11e-465b-8b2a-11271c2ebfe6)
+
+# Lowlevel Architecture Diagram:
+![image](https://github.com/user-attachments/assets/2e5180e1-77e3-424b-9a5f-72f27983dafc)
+
+
 TechTrove is built using a microservices architecture with the following components:
 
 ### 1. Service Registry (Node.js)
