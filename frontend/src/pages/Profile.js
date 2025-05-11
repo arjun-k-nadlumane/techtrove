@@ -9,6 +9,7 @@ const Profile = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
   const { customerService } = useContext(ServiceContext);
+
   
   // Get wishlist state and functions from WishlistContext
   const { wishlist, loading: wishlistLoading, error: wishlistError, removeFromWishlist } = useWishlist();
@@ -219,7 +220,7 @@ const Profile = () => {
     <Container className="py-4">
       <h2 className="mb-4">My Account</h2>
       
-      <Tab.Container id="profile-tabs" defaultActiveKey="profile">
+      <Tab.Container id="profile-tabs" defaultActiveKey="profile" >
         <Row>
           <Col md={3} className="mb-4">
             <Card className="shadow-sm">
@@ -438,7 +439,7 @@ const Profile = () => {
                               <Card className="h-100 shadow-sm">
                                 <Card.Img 
                                   variant="top" 
-                                  src={product.image || '/images/product-placeholder.jpg'} 
+                                  src={product.imageUrl || '/images/product-placeholder.jpg'} 
                                   alt={product.name}
                                   style={{ height: '160px', objectFit: 'cover' }}
                                 />
@@ -504,7 +505,7 @@ const Profile = () => {
                         <tbody>
                           {orders.map((order, index) => (
                             <tr key={order._id || index}>
-                              <td>{order._id || `#${index+1}`}</td>
+                              <td>{index+1}</td>
                               <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                               <td>
                                 <Badge 

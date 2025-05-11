@@ -15,6 +15,7 @@ const OrderHistory = () => {
   const { customerService } = useContext(ServiceContext);
   const { user } = useAuth();
 
+
   useEffect(() => {
     const fetchOrders = async () => {
       if (!customerService) {
@@ -31,7 +32,7 @@ const OrderHistory = () => {
         
         console.log('Fetching order history...');
         
-        const response = await fetch(`${customerService}/api/orders/myorders`, {
+        const response = await fetch(`${customerService}/api/orders/`, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
@@ -160,18 +161,6 @@ const OrderHistory = () => {
             </Alert>
           ) : (
             <>
-              {/* Show raw response for debugging - remove in production */}
-              <div className="mb-3 p-3 border rounded bg-light">
-                <h6>Debug Information:</h6>
-                <p>Number of orders loaded: {orders.length}</p>
-                <p>Raw data sample (first order):</p>
-                {orders.length > 0 && (
-                  <pre style={{ maxHeight: '150px', overflow: 'auto' }}>
-                    {JSON.stringify(orders[0], null, 2)}
-                  </pre>
-                )}
-              </div>
-              
               <Table responsive striped hover>
                 <thead>
                   <tr>
@@ -191,7 +180,7 @@ const OrderHistory = () => {
                       <tr key={index}>
                         <td className="text-truncate" style={{maxWidth: '150px'}}>
                           {/* Show full ID for debugging */}
-                          <span title={order._id}>{order._id}</span>
+                          <span title={order._id}>{index+1}</span>
                         </td>
                         <td>{formatDate(order.createdAt)}</td>
                         <td>

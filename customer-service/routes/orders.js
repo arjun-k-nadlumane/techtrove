@@ -3,7 +3,8 @@ const {
   createOrder, 
   getOrders, 
   getOrder, 
-  cancelOrder 
+  cancelOrder, 
+  updatePaymentStatus
 } = require('../controllers/orders');
 const { protect } = require('../middleware/auth');
 
@@ -18,6 +19,8 @@ router.route('/')
 
 router.route('/:id')
   .get(getOrder);
+
+router.patch('/:id', protect, updatePaymentStatus)
 
 router.route('/:id/cancel')
   .put(cancelOrder);

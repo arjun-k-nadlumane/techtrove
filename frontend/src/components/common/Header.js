@@ -1,12 +1,16 @@
-import React from 'react';
+import {React, useState} from 'react';
 
 import { Navbar, Nav, Container, Badge, Button } from 'react-bootstrap';
 
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, Navigate, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/AuthContext';
 
 import { useCart } from '../../context/CartContext';
+
+import {Form, FormControl} from 'react-bootstrap';
+
+
  
 const Header = () => {
 
@@ -15,6 +19,14 @@ const Header = () => {
   const { getCartItemCount } = useCart();
 
   const navigate = useNavigate();
+
+  const [searchTerm, setSearchTerm] = useState('');
+  const handleSearch =(e) => {
+    e.preventDefault();
+    if (searchTerm.trim()){
+      navigate(`/search?keyword=${encodeURIComponent(searchTerm)}`);
+    }
+  };
  
   const handleLogout = () => {
 
@@ -23,6 +35,7 @@ const Header = () => {
     navigate('/');
 
   };
+
  
   return (
 <Navbar bg="dark" variant="dark" expand="lg" className="mb-3">
@@ -42,6 +55,16 @@ const Header = () => {
 
             )}
 </Nav>
+<Form className="d-flex me-3" onSubmit={handleSearch}>
+  <FormControl
+  type='search'
+  placeholder='Search Products...'
+  className='me-2'
+  value={searchTerm}
+  onChange={(e) => setSearchTerm(e.target.value)}
+  />
+  <Button type='submit' variant='outline-light' size='sm'>Search</Button>
+</Form>
 <Nav>
 <Nav.Link as={Link} to="/cart" className="me-3 position-relative">
 <i className="bi bi-cart3 fs-5"></i>
