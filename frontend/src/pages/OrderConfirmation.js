@@ -57,7 +57,6 @@ const OrderConfirmation = () => {
         console.log("Order details:", data);
         setApiResponse(data);
         
-        // Based on your screenshot, the order data should be in data.data
         if (data.data) {
           setOrder(data.data);
         } else {
@@ -104,7 +103,7 @@ const OrderConfirmation = () => {
         </Card>
         
         <div className="d-flex gap-2">
-          <Link to="/order-history" className="btn btn-secondary">
+          <Link to="/profile" className="btn btn-secondary">
             <i className="bi bi-arrow-left me-1"></i>Back to Orders
           </Link>
           <Link to="/" className="btn btn-primary">
@@ -152,7 +151,7 @@ const OrderConfirmation = () => {
   // Log the order details for debugging
   console.log('Full order object:', order);
 
-  // Based on your screenshot, these are the key field names
+
   const orderId = order._id;
   const orderDate = order.createdAt;
   const orderStatus = order.status || 'processing';
@@ -173,7 +172,7 @@ const OrderConfirmation = () => {
         </Link>
       </div>
       
-      {/* Debug information - remove in production */}
+      {/* Debug information - remove in production
       <Card className="mb-4 bg-light">
         <Card.Header className="bg-warning">Debug Information</Card.Header>
         <Card.Body>
@@ -185,7 +184,7 @@ const OrderConfirmation = () => {
           </pre>
           <p className="text-muted small">This debug info can be removed in production.</p>
         </Card.Body>
-      </Card>
+      </Card> */}
       
       <Card className="mb-4 shadow-sm">
         <Card.Header className="bg-light">

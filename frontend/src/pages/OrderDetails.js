@@ -123,6 +123,7 @@ const OrderDetails = () => {
   const totalAmount = order.totalAmount || order.totalPrice || 0;
   const orderDate = order.createdAt || order.orderDate || new Date().toISOString();
   const orderStatus = order.status || 'Confirmed';
+  const orderPayment = order.paymentStatus || 'refund';
 
   // Format date
   const formatDate = (dateString) => {
@@ -175,7 +176,7 @@ const OrderDetails = () => {
               <h6 className="mb-2">Order Information</h6>
               <p className="mb-1"><strong>Order Date:</strong> {formatDate(orderDate)}</p>
               <p className="mb-1"><strong>Payment Method:</strong> Credit Card</p>
-              <p className="mb-1"><strong>Payment Status:</strong> Paid</p>
+              <p className="mb-1"><strong>Payment Status:</strong> {orderPayment}</p>
             </Col>
             <Col md={6}>
               <h6 className="mb-2">Shipping Address</h6>

@@ -22,6 +22,8 @@ import OrderHistory from './pages/OrderHistory';
 import OrderDetails from './pages/OrderDetails';
 import Wishlist from './pages/Wishlist'; // Import the new Wishlist page
 import NotFound from './pages/NotFound';
+import SearchResults from './pages/SearchResults';
+import Payment from './pages/Payment';
 
 // Context
 import { ServiceContext } from './services/ServiceContext';
@@ -66,6 +68,7 @@ function App() {
                       <Route path="/login" element={<Login />} />
                       <Route path="/register" element={<Register />} />
                       <Route path="/cart" element={<Cart />} />
+                      <Route path="/search" element={<SearchResults/>}/>
 
                       {/* Protected routes with explicit protection */}
                       <Route path="/profile" element={
@@ -83,6 +86,12 @@ function App() {
                       <Route path="/order-confirmation/:id" element={
                         <ProtectedRoute>
                           <OrderConfirmation />
+                        </ProtectedRoute>
+                      } />
+
+                      <Route path="/payment/:id" element={
+                        <ProtectedRoute>
+                          <Payment />
                         </ProtectedRoute>
                       } />
 

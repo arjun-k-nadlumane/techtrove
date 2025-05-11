@@ -74,6 +74,32 @@ exports.getOrder = asyncHandler(async (req, res, next) => {
 });
 
 /**
+* @desc    Update payment status of an order
+* @route   PATCH /api/orders/:id
+* @access  Private
+*/
+exports.updatePaymentStatus = asyncHandler(async (req, res, next) => {
+  const order = await Order.findOne({
+    _id: req.params.id,
+    user: req.user.id
+  });
+  if (!order) {
+    return next(new ErrorResponse(`Order not found with id of ${req.params.id}`, 404));
+  }
+  if (!req.body.paymentStatus) {
+    return next(new ErrorResponse('Please provide paymentStatus', 400));
+  }
+  order.paymentStatus = req.body.paymentStatus;
+  await order.save();
+  res.status(200).json({
+    success: true,
+    data: order
+  });
+ });
+
+ 
+
+/**
  * @desc    Cancel order
  * @route   PUT /api/orders/:id/cancel
  * @access  Private

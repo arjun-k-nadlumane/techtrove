@@ -10,6 +10,10 @@ const Profile = () => {
   const navigate = useNavigate();
   const { customerService } = useContext(ServiceContext);
 
+<<<<<<< HEAD
+=======
+  
+>>>>>>> 16834b3d0907b0c0667111d112f7d42171084b11
   // Get wishlist state and functions from WishlistContext
   const { wishlist, loading: wishlistLoading, error: wishlistError, removeFromWishlist } = useWishlist();
 
@@ -218,8 +222,8 @@ const Profile = () => {
   return (
     <Container className="py-4">
       <h2 className="mb-4">My Account</h2>
-
-      <Tab.Container id="profile-tabs" defaultActiveKey="profile">
+      
+      <Tab.Container id="profile-tabs" defaultActiveKey="profile" >
         <Row>
           <Col md={3} className="mb-4">
             <Card className="shadow-sm">
@@ -436,9 +440,9 @@ const Profile = () => {
                           {wishlist.map(product => (
                             <Col key={product._id || product.id}>
                               <Card className="h-100 shadow-sm">
-                                <Card.Img
-                                  variant="top"
-                                  src={product.imageUrl || 'https://via.placeholder.com/400x400?text=Product+Image'}
+                                <Card.Img 
+                                  variant="top" 
+                                  src={product.imageUrl || '/images/product-placeholder.jpg'} 
                                   alt={product.name}
                                   fluid
                                   style={{ height: '160px', objectFit: 'cover' }}
@@ -505,7 +509,7 @@ const Profile = () => {
                         <tbody>
                           {orders.map((order, index) => (
                             <tr key={order._id || index}>
-                              <td>{order._id || `#${index + 1}`}</td>
+                              <td>{index+1}</td>
                               <td>{new Date(order.createdAt).toLocaleDateString()}</td>
                               <td>
                                 <Badge
