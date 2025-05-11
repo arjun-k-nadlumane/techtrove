@@ -159,56 +159,6 @@ All services return error responses in a consistent format:
   - `GET /api/analytics/products/:id`: Get analytics for a product
   - `GET /api/visualization/sentiment/:id`: Get sentiment visualization
 
-## Deployment Guide
-
-### Docker Deployment
-A `docker-compose.yml` file is provided for easy deployment of the entire system:
-```bash
-docker-compose up -d
-```
-
-### Individual Service Deployment
-Each service can be deployed independently:
-1. **Service Registry**: `npm start` in the service-registry directory
-2. **Customer Service**: `npm start` in the customer-service directory
-3. **Product Service**: `./mvnw spring-boot:run` in the product-service directory
-4. **Feedback Service**: `python app.py` in the feedback-service directory
-5. **Frontend**: `npm start` in the frontend directory
-
-## Development Guidelines
-
-### 1. Code Style
-- **JavaScript/Node.js**: ESLint with Airbnb style guide
-- **Java/Spring Boot**: Google Java Style Guide
-- **Python/Flask**: PEP 8
-- **React**: Prettier with standard configuration
-
-### 2. Testing
-- **Unit Tests**: Test individual components
-- **Integration Tests**: Test service interactions
-- **End-to-End Tests**: Test complete workflows
-
-### 3. Version Control
-- **Branching Strategy**: Feature branching
-- **Pull Requests**: Required for all changes
-- **Code Review**: Mandatory before merging
-
-### 4. Documentation
-- **API Documentation**: Keep Swagger docs updated
-- **Code Comments**: Document complex logic
-- **README**: Keep setup instructions updated
-
-## Performance Considerations
-
-### 1. Caching
-- **Product Catalog**: Cache frequently accessed products
-- **Review Analytics**: Cache analytics calculations
-
-### 2. Pagination
-- All list endpoints support pagination to limit response size
-
-### 3. Optimized Queries
-- Database queries are optimized with proper indexing
 
 ## Future Enhancements
 
@@ -226,5 +176,5 @@ Each service can be deployed independently:
 3. **JWT Validation Errors**: Ensure secret keys match
 
 ### Monitoring
-- Use the Service Registry dashboard for monitoring service health
+- Use the Service Registry terminal for monitoring service health
 - Check individual service logs for detailed error information
