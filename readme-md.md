@@ -173,34 +173,11 @@ The React frontend provides the user interface for the e-commerce platform.
 - **Product Detail**: Shows detailed product information with reviews
 - **Shopping Cart**: Manages user shopping cart
 - **User Dashboard**: Displays user information and order history
-- **Admin Dashboard**: Provides administrative functionality
-
-## Circuit Breaker Pattern
-
-The application implements the Circuit Breaker pattern to ensure fault tolerance:
-
-1. **Closed State**: All requests pass through to the service
-2. **Open State**: When a service fails repeatedly, the circuit breaker opens and requests are rejected
-3. **Half-Open State**: After a timeout, the circuit breaker allows a limited number of test requests
-
-This pattern prevents cascading failures and ensures system stability even when individual services fail.
-
-## Testing
-
-Each service includes unit and integration tests:
-
-- Customer Service: `npm test`
-- Service Registry: `npm test`
-- Product Service: `./mvnw test`
-- Feedback Service: `pytest`
-- Frontend: `npm test`
+  
 
 ## Contributors
 
-- Your Name - Frontend & Customer Service
-- Aditi - Product Service
-- Sachil - Feedback Service
+- Arjun K Nadlumane
+- Aditi Sakpal
+- Sachismita
 
-## License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
