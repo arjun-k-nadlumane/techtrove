@@ -24,6 +24,7 @@ import Wishlist from './pages/Wishlist'; // Import the new Wishlist page
 import NotFound from './pages/NotFound';
 import SearchResults from './pages/SearchResults';
 import Payment from './pages/Payment';
+import ProductVisualization from './pages/ProductVisualization';
 
 // Context
 import { ServiceContext } from './services/ServiceContext';
@@ -69,6 +70,7 @@ function App() {
                       <Route path="/register" element={<Register />} />
                       <Route path="/cart" element={<Cart />} />
                       <Route path="/search" element={<SearchResults/>}/>
+                      <Route path="/products/:productId/visualizations" element={<ProductVisualization />} />
 
                       {/* Protected routes with explicit protection */}
                       <Route path="/profile" element={

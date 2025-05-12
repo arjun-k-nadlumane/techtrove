@@ -1,8 +1,8 @@
 // pages/ProductDetail.js
 import React, { useState, useEffect, useContext } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Container, Row, Col, Image, Button, Card, Badge, Tabs, Tab, Form, Alert, Spinner, Table } from 'react-bootstrap';
-import { FaStar, FaRegStar, FaStarHalfAlt, FaHeart, FaRegHeart, FaShoppingCart } from 'react-icons/fa';
+import { FaStar, FaRegStar, FaStarHalfAlt, FaHeart, FaRegHeart, FaShoppingCart, FaChartBar } from 'react-icons/fa';
 import { ServiceContext } from '../services/ServiceContext';
 import { useAuth } from '../context/AuthContext';
 import { useCart } from '../context/CartContext';
@@ -104,7 +104,7 @@ const ProductDetail = () => {
     };
     
     fetchData();
-  }, [id, services, user,tokens]);
+  }, [id, services, user, tokens]);
   
   // Handle adding/removing from wishlist
   const handleWishlist = async () => {
@@ -345,7 +345,10 @@ const ProductDetail = () => {
                               <div className="progress flex-grow-1" style={{ height: '8px' }}>
                                 <div 
                                   className="progress-bar bg-success" 
-                                  style={{ width: `${analytics.rating_distribution[rating] / analytics.total_reviews * 100}%` }}
+                                  style={{ 
+                                    width: `${analytics.total_reviews > 0 ? 
+                                      (analytics.rating_distribution[rating] / analytics.total_reviews * 100) : 0}%` 
+                                  }}
                                 ></div>
                               </div>
                               <span className="ms-2">{analytics.rating_distribution[rating]}</span>
@@ -353,32 +356,53 @@ const ProductDetail = () => {
                           ))}
                         </div>
                         
-                        <div className="mt-4">
-                          <h6>Sentiment Analysis</h6>
-                          <div className="d-flex justify-content-between text-center">
-                            <div>
-                              <div className="sentiment-value text-success">
-                                {analytics.sentiment_distribution.positive}
+                        {analytics.sentiment_distribution && (
+                          <div className="mt-4">
+                            <h6>Sentiment Analysis</h6>
+                            <div className="d-flex justify-content-between text-center">
+                              <div>
+                                <div className="sentiment-value text-success">
+                                  {analytics.sentiment_distribution.positive}
+                                </div>
+                                <div>Positive</div>
                               </div>
-                              <div>Positive</div>
-                            </div>
-                            <div>
-                              <div className="sentiment-value text-warning">
-                                {analytics.sentiment_distribution.neutral}
+                              <div>
+                                <div className="sentiment-value text-warning">
+                                  {analytics.sentiment_distribution.neutral}
+                                </div>
+                                <div>Neutral</div>
                               </div>
-                              <div>Neutral</div>
-                            </div>
-                            <div>
-                              <div className="sentiment-value text-danger">
-                                {analytics.sentiment_distribution.negative}
+                              <div>
+                                <div className="sentiment-value text-danger">
+                                  {analytics.sentiment_distribution.negative}
+                                </div>
+                                <div>Negative</div>
                               </div>
-                              <div>Negative</div>
                             </div>
                           </div>
+                        )}
+                        
+                        <div className="mt-3">
+                          <Link 
+                            to={`/products/${id}/visualizations`} 
+                            className="btn btn-outline-info w-100"
+                          >
+                            <FaChartBar className="me-2" /> Advanced Analytics
+                          </Link>
                         </div>
                       </>
                     ) : (
-                      <p>No review data available</p>
+                      <>
+                        <p>No review data available</p>
+                        <div className="mt-3">
+                          <Link 
+                            to={`/products/${id}/visualizations`} 
+                            className="btn btn-outline-info w-100"
+                          >
+                            <FaChartBar className="me-2" /> Advanced Analytics
+                          </Link>
+                        </div>
+                      </>
                     )}
                   </Card.Body>
                 </Card>

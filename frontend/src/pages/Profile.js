@@ -10,10 +10,7 @@ const Profile = () => {
   const navigate = useNavigate();
   const { customerService } = useContext(ServiceContext);
 
-<<<<<<< HEAD
-=======
   
->>>>>>> 16834b3d0907b0c0667111d112f7d42171084b11
   // Get wishlist state and functions from WishlistContext
   const { wishlist, loading: wishlistLoading, error: wishlistError, removeFromWishlist } = useWishlist();
 
