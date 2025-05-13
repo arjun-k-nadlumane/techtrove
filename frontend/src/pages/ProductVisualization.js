@@ -10,6 +10,7 @@ const ProductVisualization = () => {
   const { productId } = useParams();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [serviceError, setServiceError] = useState(false);
   const [product, setProduct] = useState(null);
   const [visualizationData, setVisualizationData] = useState(null);
 
@@ -29,6 +30,12 @@ const ProductVisualization = () => {
         setLoading(false);
       } catch (err) {
         console.error('Error fetching data:', err);
+        
+        // Check if the error is a network error (service unavailable)
+        if (err.code === 'ERR_NETWORK' || err.code === 'ECONNREFUSED' || err.message.includes('Network Error')) {
+          setServiceError(true);
+        }
+        
         setError(err.message || 'Failed to fetch data');
         setLoading(false);
       }
@@ -48,7 +55,28 @@ const ProductVisualization = () => {
     );
   }
 
-  if (error) {
+  if (serviceError) {
+    return (
+      <Container className="py-5 text-center">
+        <Card className="shadow-sm border-0 my-5">
+          <Card.Body className="py-5">
+            <div className="mb-4">
+              <i className="bi bi-exclamation-triangle text-warning" style={{ fontSize: '3rem' }}></i>
+            </div>
+            <Card.Title className="fs-2 mb-3">Oops! We're working on it</Card.Title>
+            <Card.Text className="text-muted mb-4">
+              Our service is temporarily unavailable. Our team is working to get everything back up and running as soon as possible.
+            </Card.Text>
+            <Link to="/">
+              <Button variant="primary">Go to Homepage</Button>
+            </Link>
+          </Card.Body>
+        </Card>
+      </Container>
+    );
+  }
+
+  if (error && !serviceError) {
     return (
       <Container className="py-5">
         <Card className="border-danger">
