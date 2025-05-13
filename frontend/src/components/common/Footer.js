@@ -42,10 +42,9 @@ const Footer = () => {
 <Col md={4} className="mb-3">
 <h6>Contact Us</h6>
 <address className="small">
-<div>123 Tech Street</div>
-<div>San Francisco, CA 94103</div>
-<div>Email: support@techtrove.com</div>
-<div>Phone: (123) 456-7890</div>
+<div>Arjun K Nadlumane</div>
+<div>Aditi Sakpal</div>
+<div>Suchismita Behera</div>
 </address>
 </Col>
 </Row>

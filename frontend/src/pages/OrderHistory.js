@@ -121,16 +121,16 @@ const OrderHistory = () => {
 
   // Helper function to parse and format price
   const formatPrice = (price) => {
-    if (price === undefined || price === null) return '$0.00';
+    if (price === undefined || price === null) return '₹0.00';
     
     // Handle string or number
     const numericPrice = typeof price === 'string' ? parseFloat(price) : price;
     
     // Check if it's a valid number
-    if (isNaN(numericPrice)) return '$0.00';
+    if (isNaN(numericPrice)) return '₹0.00';
     
     // Return formatted price
-    return `$${numericPrice.toFixed(2)}`;
+    return `${numericPrice.toFixed(2)}`;
   };
 
   return (
