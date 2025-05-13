@@ -84,7 +84,7 @@ const handleCheckout = () => {
 <div className="cart-item-image me-3">
 <img 
 
-                        src={item.imageUrl || 'https://via.placeholder.com/100?text=Product'} 
+                        src={item.imageUrl} 
 
                         alt={item.name}
 
