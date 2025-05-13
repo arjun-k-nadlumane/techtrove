@@ -56,7 +56,7 @@ const ProductVisualization = () => {
           <Card.Body>
             <Card.Title>Failed to load visualization data</Card.Title>
             <Card.Text>{error}</Card.Text>
-            <Link to={`/products/${productId}`}>
+            <Link to={`/product/${productId}`}>
               <Button variant="primary">Back to Product</Button>
             </Link>
           </Card.Body>
@@ -89,7 +89,7 @@ const ProductVisualization = () => {
     <Container className="py-4">
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1 className="text-2xl font-bold">{product.name} - Review Analytics</h1>
-        <Link to={`/products/${productId}`}>
+        <Link to={`/product/${productId}`}>
           <Button variant="outline-primary">Back to Product</Button>
         </Link>
       </div>
