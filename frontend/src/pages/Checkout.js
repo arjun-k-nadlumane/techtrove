@@ -368,7 +368,7 @@ const Checkout = () => {
 </div>
 <div className="d-flex justify-content-between mb-2 fw-bold">
 <span>Total:</span>
-<span>${getCartTotal().toFixed(2)}</span>
+<span>₹{getCartTotal().toFixed(2)}</span>
 </div>
 </Card.Body>
 </Card>

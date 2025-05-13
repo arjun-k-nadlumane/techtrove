@@ -104,7 +104,7 @@ const ProductCard = ({ product }) => {
         {renderStarRating(product.averageRating || 0)}
 <Card.Text className="text-primary fw-bold mb-3">
 
-          ${parseFloat(product.price || 0).toFixed(2)}
+₹{parseFloat(product.price || 0).toFixed(2)}
 </Card.Text>
 <div className="mt-auto">
 <div className="d-grid gap-2">

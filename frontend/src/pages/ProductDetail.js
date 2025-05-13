@@ -275,7 +275,7 @@ const ProductDetail = () => {
           </div>
           
           <div className="mb-4">
-            <h3 className="text-primary mb-0">${parseFloat(product.price).toFixed(2)}</h3>
+            <h3 className="text-primary mb-0">₹{parseFloat(product.price).toFixed(2)}</h3>
             <p className={`stock-status ${product.stockQuantity > 0 ? 'text-success' : 'text-danger'}`}>
               {product.stockQuantity > 0 ? `In Stock (${product.stockQuantity} available)` : 'Out of Stock'}
             </p>

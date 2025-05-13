@@ -96,7 +96,7 @@ const handleCheckout = () => {
 </div>
 <div className="cart-item-details flex-grow-1">
 <h5 className="mb-1">{item.name}</h5>
-<p className="text-primary mb-1">${parseFloat(item.price).toFixed(2)}</p>
+<p className="text-primary mb-1">₹{parseFloat(item.price).toFixed(2)}</p>
 </div>
 <div className="cart-item-quantity mx-3" style={{ width: '100px' }}>
 <Form.Control
@@ -114,7 +114,7 @@ const handleCheckout = () => {
                       />
 </div>
 <div className="cart-item-subtotal mx-3 text-end">
-<p className="mb-0 fw-bold">${(item.price * item.quantity).toFixed(2)}</p>
+<p className="mb-0 fw-bold">₹{(item.price * item.quantity).toFixed(2)}</p>
 </div>
 <div className="cart-item-actions ms-3">
 <Button 
@@ -174,7 +174,7 @@ const handleCheckout = () => {
 <hr />
 <div className="d-flex justify-content-between mb-3 fw-bold">
 <span>Total:</span>
-<span className="text-primary">${getCartTotal().toFixed(2)}</span>
+<span className="text-primary">₹{getCartTotal().toFixed(2)}</span>
 </div>
 <div className="d-grid gap-2">
 <Button 
