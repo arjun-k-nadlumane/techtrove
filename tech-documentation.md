@@ -18,6 +18,8 @@ TechTrove is built using a microservices architecture with the following compone
   - Health monitoring
   - Circuit breaker implementation
   - Service dashboard
+![image](https://github.com/user-attachments/assets/3fb70768-1068-492d-b5d3-a261b9734973)
+![image](https://github.com/user-attachments/assets/a6b7ff12-4180-49f7-a7de-2efb9cf5fc60)
 
 ### 2. Customer Service (Node.js + MongoDB)
 - **Primary Role**: Manage customer accounts and operations
