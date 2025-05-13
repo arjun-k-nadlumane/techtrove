@@ -57,7 +57,7 @@ function App() {
         <AuthProvider>
           <CartProvider>
             <WishlistProvider> {/* Add WishlistProvider here */}
-              <div className="d-flex flex-column min-vh-100" style={{ backgroundColor: '#6495ed42' }}>
+              <div className="d-flex flex-column min-vh-100">
                 <Header />
                 <main className="flex-grow-1 py-3">
                   <Container>
