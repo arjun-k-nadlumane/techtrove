@@ -197,7 +197,7 @@ const OrderDetails = () => {
                   <span className="fw-medium">{item.name}</span>
                   <small className="text-muted ms-2">x{item.quantity || item.qty || 1}</small>
                 </div>
-                <span>${((item.price || 0) * (item.quantity || item.qty || 1)).toFixed(2)}</span>
+                <span>₹{((item.price || 0) * (item.quantity || item.qty || 1)).toFixed(2)}</span>
               </ListGroup.Item>
             ))}
           </ListGroup>

@@ -256,7 +256,7 @@ const OrderConfirmation = () => {
           )}
 
           <div className="text-end">
-            <p><strong>Total:</strong> ${parseFloat(orderTotal || 0).toFixed(2)}</p>
+            <p><strong>Total:</strong> ₹{parseFloat(orderTotal || 0).toFixed(2)}</p>
           </div>
 
           <div className="d-flex justify-content-between mt-4">

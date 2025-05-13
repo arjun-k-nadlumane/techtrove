@@ -70,7 +70,7 @@ const Home = () => {
   return (
 <div className="home-page">
       {/* Hero Section */}
-<div className="bg-primary text-white py-5 mb-5">
+<div className="bg-primary text-white py-5 m b-5" >
 <Container>
 <Row className="align-items-center">
 <Col md={7} className="mb-4 mb-md-0">
